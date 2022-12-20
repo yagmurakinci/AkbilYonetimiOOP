@@ -72,44 +72,7 @@ namespace AkbilYonetimiFormUI
             try
             {
                 
-                #region TalimatiKaydetKodlari
-
-
-                string connectionString = @"Server=DESKTOP-OFVK2FD\MSSQLSERVER01;Database=AKBİLYONETİMİDB;Trusted_Connection=True;";
-                SqlConnection baglantiNesnesi = new SqlConnection();
-                baglantiNesnesi.ConnectionString = connectionString;
-                SqlCommand komutNesnesi = new SqlCommand();
-                komutNesnesi.Connection = baglantiNesnesi;
-                komutNesnesi.CommandText = $"insert into Talimatlar (OlustulmaTarihi,AkbilID,YuklenecekTutar,YuklendiMi,YuklendigiTarih) values (@olusTrh, @akbilid, @tutar,0, null)";
-
-                komutNesnesi.Parameters.AddWithValue("@olusTrh",yeniTalimat.OlusturulmaTarihi);
-                komutNesnesi.Parameters.AddWithValue("@akbilid",yeniTalimat.AkbilID);
-                komutNesnesi.Parameters.AddWithValue("@tutar",yeniTalimat.YuklenecekMiktar);
-                
-                
-                baglantiNesnesi.Open();
-                if (komutNesnesi.ExecuteNonQuery() > 0)
-                {
-                    MessageBox.Show("Talimat oluşturuldu!");
-                }
-                baglantiNesnesi.Close();
-                cmbBoxAkbiller.SelectedIndex = -1;
-                cmbBoxAkbiller.Text = "Akbil .seçiniz..";
-                txtBakiye.Clear();
-                groupBoxBakiye.Enabled = false;
-
-                if (checkBoxBekleyenTalimatlar.Checked)
-                {
-                    GrideTalimatlariGetir(true);
-                }
-                else
-                {
-                    GrideTalimatlariGetir();
-                }
-                BekleyenTalimatSayisiniGetir();
-
-
-                #endregion
+               
             }
             catch (Exception hata)
             {

@@ -11,14 +11,14 @@ namespace AkbilYonetimiDataLayer
 {
     public class SQLVeriTabaniİslemleri : IVeriTabaniIslemleri
     {
-        public string ConnectionStringCumlesi { get; set; }
+        public string ConnectionStringCumlesi { get; set; } 
         private SqlConnection baglantiNesnesi;
         private SqlCommand komutNesnesi;
         public SQLVeriTabaniİslemleri()
         {
             baglantiNesnesi = new SqlConnection();
             komutNesnesi = new SqlCommand();
-            ConnectionStringCumlesi = "";
+            ConnectionStringCumlesi = @"Server = DESKTOP-OFVK2FD\MSSQLSERVER01; Database = AKBİLYONETİMİDB; Trusted_Connection = True; ";
             baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
             komutNesnesi.Connection = baglantiNesnesi;
         }
@@ -36,6 +36,7 @@ namespace AkbilYonetimiDataLayer
             {
                 using (baglantiNesnesi)
                 {
+                    baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     komutNesnesi.CommandText = eklemeyadaGuncellemeCumlesi;
                     BaglantiyiAc();
                     int etkilenenSatirSayisi = komutNesnesi.ExecuteNonQuery();
@@ -56,8 +57,8 @@ namespace AkbilYonetimiDataLayer
             string degerler = String.Empty;
             foreach (KeyValuePair<string, object> item in kolonlar)
             {
-                alanlar += $"{item},";
-                degerler += $"{kolonlar[item.ToString()]},";
+                alanlar += $"{item.Key},";
+                degerler += $"{item.Value},";
             }
             alanlar = alanlar.TrimEnd(',');
             degerler = degerler.TrimEnd(',');
