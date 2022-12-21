@@ -1,4 +1,5 @@
 ﻿using AkbilYonetimBusinessLayer;
+using AkbilYonetimiDataLayer;
 using AkbilYonetimiEntityLayer.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,8 @@ namespace AkbilYonetimiFormUI
 {
     public partial class FrmTalimatIslemleri : Form
     {
-        public decimal YuklenecekMiktar { get; private set; }
+        IVeriTabaniIslemleri veriTabaniIslemleri = new SQLVeriTabaniİslemleri();
+        //public decimal YuklenecekMiktar { get; private set; }
 
         public FrmTalimatIslemleri()
         {
@@ -29,9 +31,10 @@ namespace AkbilYonetimiFormUI
             try
             {
                 
-
-                   
-                }
+                cmbBoxAkbiller.DataSource = veriTabaniIslemleri.VeriGetir("Akbiller",kosullar: $"AkbilSahibiId={GenelIslemler.GirisYapmisKullaniciID}");
+                cmbBoxAkbiller.DisplayMember = "AkbilNo";
+                cmbBoxAkbiller.ValueMember = "AkbilNo";
+            }
                 catch (Exception hata)
                 {
 
@@ -56,6 +59,8 @@ namespace AkbilYonetimiFormUI
             BekleyenTalimatSayisiniGetir(); // hata verdiği için yorum satırı yaptık
             dataGridViewTalimatlar.ContextMenuStrip = contextMenuStripTalimatGrid;
             groupBoxBakiye.Enabled = false;
+
+
         }
 
         private void cmbBoxAkbiller_SelectedIndexChanged(object sender, EventArgs e)
@@ -71,7 +76,53 @@ namespace AkbilYonetimiFormUI
         {
             try
             {
-                
+                if (cmbBoxAkbiller.SelectedIndex<0)
+                {
+                    MessageBox.Show("Talimat yüklemesi için akbil seçimi zorunludur!");
+                    return;
+                }
+                if (txtBakiye.Text == null || txtBakiye.Text == string.Empty)
+                    throw new Exception("Yükleme miktarı belirtilmemiş");
+
+                Talimat yeniTalimat = new Talimat()
+                {
+                    AkbilID = cmbBoxAkbiller.SelectedValue.ToString(),
+                    OlusturulmaTarihi = DateTime.Now,
+                    YuklendiMi = false,
+                    YuklendigiTarihi = null,
+                    YuklenecekMiktar = Convert.ToDecimal(txtBakiye.Text)
+                };
+
+                Dictionary<string, object> kolonlar = new Dictionary<string, object>();
+                kolonlar.Add("AkbilID", $"'{yeniTalimat.AkbilID}'");
+                kolonlar.Add("OlustulmaTarihi", $"'{yeniTalimat.OlusturulmaTarihi.ToString("yyyy-MM-dd HH:mm:ss")}'");
+                kolonlar.Add("YuklendiMi", "0");
+                kolonlar.Add("YuklendigiTarih", "null");
+                kolonlar.Add("YuklenecekTutar", yeniTalimat.YuklenecekMiktar);
+
+                int eklenenTalimatSayisi = veriTabaniIslemleri.KomutIsle(veriTabaniIslemleri.VeriEklemeCumlesiOlustur("Talimatlar", kolonlar));
+                if (eklenenTalimatSayisi>0)
+                {
+                    MessageBox.Show("Yeni talimat eklendi");
+                    txtBakiye.Clear();
+                    cmbBoxAkbiller.SelectedIndex = -1;
+                    cmbBoxAkbiller.Text = "Akbil Seçiniz..";
+                    groupBoxBakiye.Enabled = false;
+                    if (checkBoxTumunuGoster.Checked)
+                    {
+                        GrideTalimatlariGetir(true);
+                    }
+                    else
+                    {
+                        GrideTalimatlariGetir();
+                    }
+                    BekleyenTalimatSayisiniGetir();
+                }
+                else
+                {
+                    MessageBox.Show("Yeni talimat BAŞARISIZ!");
+                }
+               
                
             }
             catch (Exception hata)
@@ -80,14 +131,39 @@ namespace AkbilYonetimiFormUI
                 MessageBox.Show("Beklenmedik bir hata oluştu" + hata.Message);
             }
         }
-        private void GrideTalimatlariGetir (bool sadeceBekleyenleriGoster = false)
+        private void GrideTalimatlariGetir (bool tumunuGoster = false)
         {
-            
+            try
+            {
+                if (tumunuGoster) //tumunuGoster true mu?? True ise girecek
+                {
+                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId=                    { GenelIslemler.GirisYapmisKullaniciID} ");
+                }
+                else
+                {
+                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId=                    { GenelIslemler.GirisYapmisKullaniciID} and YuklendiMi = 0");
+                }
+                
+
+                dataGridViewTalimatlar.Columns["Id"].Visible = false;
+                dataGridViewTalimatlar.Columns["KullaniciId"].Visible = false;
+                dataGridViewTalimatlar.Columns["AkbilID"].Width = 200;
+                dataGridViewTalimatlar.Columns["OlustulmaTarihi"].Width = 200;
+                dataGridViewTalimatlar.Columns["YuklendigiTarih"].Width = 150;
+
+                dataGridViewTalimatlar.Columns["YuklendigiTarih"].HeaderText = "Yüklendiği Tarih";
+                dataGridViewTalimatlar.Columns["OlustulmaTarihi"].HeaderText = "Oluşturulma Tarihi";
+            }
+            catch (Exception hata)
+            {
+
+                MessageBox.Show("Beklenmedik hata oluştu. HATA" + hata.Message);
+            }
         }
 
         private void checkBoxBekleyenTalimatlar_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxBekleyenTalimatlar.Checked)
+            if (checkBoxTumunuGoster.Checked)
             {
                 GrideTalimatlariGetir(true);
             }
@@ -101,7 +177,9 @@ namespace AkbilYonetimiFormUI
         {
             try
             {
-               
+                Dictionary<string, object> girdiler = new Dictionary<string, object>();
+                girdiler.Add("@kullaniciId", GenelIslemler.GirisYapmisKullaniciID);
+                lblBekleyenTalimat.Text = veriTabaniIslemleri.GeriSayisalDonusYapanProsedur("Sp_BekleyenTalimatSayisi", girdiler).ToString();
             }
             catch (Exception hata)
             {

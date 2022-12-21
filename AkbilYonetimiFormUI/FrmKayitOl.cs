@@ -30,7 +30,7 @@ namespace AkbilYonetimiFormUI
                     if (item is TextBox && (((TextBox)item).Text ==null || ((TextBox)item).Text == string.Empty ))
                     {
                         MessageBox.Show("Zorunlu alanlar boş geçilemez! ");
-                        return; //???
+                        return; 
                     }
                 }
                 Dictionary<string, object> yeniKullanici = new Dictionary<string, object>();
@@ -67,8 +67,13 @@ namespace AkbilYonetimiFormUI
                     {
                         FrmGiris frmGiris = new FrmGiris();
                         frmGiris.Email = txtEmail.Text;
+                        for (int i = 0; i < Application.OpenForms.Count; i++)
+                        {
+                            Application.OpenForms[i].Hide();
+                        }
+
                         frmGiris.Show();
-                        this.Close();
+                        
                     }
 
                 }//if bitti sonuc>0

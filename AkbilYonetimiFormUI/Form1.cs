@@ -1,4 +1,5 @@
 ﻿using AkbilYonetimBusinessLayer;
+using AkbilYonetimiDataLayer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace AkbilYonetimiFormUI
         {
             InitializeComponent();
         }
+        IVeriTabaniIslemleri VeriTabaniIslemleri = new SQLVeriTabaniİslemleri();
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -34,7 +36,45 @@ namespace AkbilYonetimiFormUI
         {
             try
             {
-                
+                foreach (var item in Controls)
+                {
+                    if (item is TextBox && (((TextBox)item).Text == null || ((TextBox)item).Text == string.Empty))
+                    {
+                        MessageBox.Show("Zorunlu alanlar boş geçilemez! ");
+                        return; 
+                    }
+                }
+                //uzun yol
+                string[] istedigimKolonlar = new string[] { "Email", "Parola","Isim","Soyisim" ,"Id"};
+                string kosul = $"Email='{txtEmail.Text}' and Parola = '{GenelIslemler.MD5Encryption(txtSifre.Text)}'";
+
+                var sonuc = VeriTabaniIslemleri.VeriOku("Kullanicilar", istedigimKolonlar, kosul);
+
+
+                //daha kısa
+                //var sonuc = VeriTabaniIslemleri.VeriOku("Kullanıcılar", new string[] { "Email", "Parola","Id" }, $"where Email={txtEmail} and Parola= {GenelIslemler.MD5Encryption(txtSifre.Text)}";
+
+                if (sonuc.Count==0)
+                {
+                    MessageBox.Show("Kullanıcı adınız ya da şifreniz yanloştır! Lütfen tekrar deneyiniz!", "HATA",MessageBoxButtons.OK,MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    GenelIslemler.GirisYapmisKullaniciID = Convert.ToInt32(sonuc["Id"]);
+                    GenelIslemler.GirisYapmisKullaniciAdSoyad = $"{sonuc["Isim"]} {sonuc["Soyisim"]}";
+
+                    MessageBox.Show($"Hoşgeldiniz.... {GenelIslemler.GirisYapmisKullaniciAdSoyad}");
+                    if (checkBoxBeniHatirla.Checked)
+                    {
+                        Properties.Settings.Default.KullaniciEmail = txtEmail.Text;
+                        Properties.Settings.Default.KullaniciSifre = txtSifre.Text;
+                        AkbilYonetimiFormUI.Properties.Settings.Default.BeniHatirla = true;
+                        Properties.Settings.Default.Save();
+                    }
+                    this.Hide();
+                    FrmIslemler frmIslemler = new FrmIslemler();
+                    frmIslemler.Show();
+                }
             }
             catch (Exception hata)
             {
@@ -45,9 +85,10 @@ namespace AkbilYonetimiFormUI
 
         private void btnKayitOl_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            
             FrmKayitOl frmKayitOl = new FrmKayitOl();
             frmKayitOl.Show();
+            this.Close();
         }
 
         private void FrmGiris_Load(object sender, EventArgs e)
@@ -98,7 +139,13 @@ namespace AkbilYonetimiFormUI
 
         private void checkBoxBeniHatirla_CheckedChanged_1(object sender, EventArgs e)
         {
-
+            if (!checkBoxBeniHatirla.Checked)
+            {
+                Properties.Settings.Default.KullaniciEmail = string.Empty;
+                Properties.Settings.Default.KullaniciSifre = string.Empty;
+                AkbilYonetimiFormUI.Properties.Settings.Default.BeniHatirla = false;
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }

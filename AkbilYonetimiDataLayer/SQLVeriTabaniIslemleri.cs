@@ -36,6 +36,7 @@ namespace AkbilYonetimiDataLayer
             {
                 using (baglantiNesnesi)
                 {
+                    komutNesnesi.CommandType = CommandType.Text;
                     baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     komutNesnesi.CommandText = eklemeyadaGuncellemeCumlesi;
                     BaglantiyiAc();
@@ -74,12 +75,14 @@ namespace AkbilYonetimiDataLayer
             {
                 using (baglantiNesnesi) // using bloğu kullandığı kaynağı blok bitince kapatır ya da yok eder.
                 {
+                    baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     //ÖRN: select * from Akbiller where KullaniciId=3
                     string sorgu = $"select {kolonlar} from {tabloAdi} ";
-                    if (kosullar != null || kosullar != string.Empty)
+                    if (kosullar != null && kosullar != string.Empty)
                     {
                         sorgu += $" where {kosullar}";
                     }
+                    komutNesnesi.CommandType = CommandType.Text;
                     komutNesnesi.CommandText = sorgu;
                     SqlDataAdapter adaptor = new SqlDataAdapter(komutNesnesi);
                     BaglantiyiAc();
@@ -105,7 +108,7 @@ namespace AkbilYonetimiDataLayer
             }
             setler = setler.TrimEnd(',');
             sorgu = $"update {tabloAdi}set {setler}";
-            if (kosullar != null || kosullar != string.Empty)
+            if (kosullar != null && kosullar != string.Empty)
             {
                 sorgu += $"where{kosullar}";
             }
@@ -125,8 +128,10 @@ namespace AkbilYonetimiDataLayer
             {
                 using (baglantiNesnesi)
                 {
+                    komutNesnesi.CommandType = CommandType.Text;
+                    baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     string sorgu = $"delete from {tabloAdi} ";
-                    if (kosullar != null || kosullar != string.Empty)
+                    if (kosullar != null && kosullar != string.Empty)
                     {
                         sorgu += $" where {kosullar}";
                     }
@@ -159,18 +164,20 @@ namespace AkbilYonetimiDataLayer
                     alanlar += $"{item},";
                 }
                 alanlar = alanlar.TrimEnd(',');
-                string sorgu = $"select {alanlar} from {tabloAdi}";
-                if (kosullar !=null || kosullar!=string.Empty)
+                string sorgu = $"select {alanlar} from {tabloAdi} ";
+                if (kosullar !=null && kosullar!=string.Empty)
                 {
-                    sorgu += $"where {kosullar}";
+                    sorgu += $" where {kosullar}";
                 }
 
                 komutNesnesi.CommandText = sorgu;
                 using (baglantiNesnesi)
                 {
+                    komutNesnesi.CommandType = CommandType.Text;
+                    baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     BaglantiyiAc();
                     SqlDataReader okuyucu = komutNesnesi.ExecuteReader();
-                    if (okuyucu.Read())
+                    if (okuyucu.HasRows)
                     {
                         while (okuyucu.Read())
                         {
@@ -181,6 +188,40 @@ namespace AkbilYonetimiDataLayer
                         }//while bitti?? fazlalık mı?
                     }//if bitti
                 }//using bitti
+                return sonuc;
+            }
+            catch 
+            {
+
+                throw;
+            }
+        }
+
+        public int GeriSayisalDonusYapanProsedur(string prosedurAdi, Dictionary<string, object> girdiler = null)
+        {
+            try
+            {
+                int sonuc = 0;
+                using (baglantiNesnesi)
+                {
+                    baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
+                    komutNesnesi.CommandText = prosedurAdi;
+                    komutNesnesi.CommandType = CommandType.StoredProcedure;
+                    if (girdiler != null)
+                    {
+                        foreach (var item in girdiler)
+                        {
+                            SqlParameter girdi = komutNesnesi.Parameters.AddWithValue($"{item.Key}", item.Value);
+                            girdi.Direction = ParameterDirection.Input;
+                        }
+                    }
+                    SqlParameter returnValue = new SqlParameter("@return_value", SqlDbType.Int);
+                    returnValue.Direction = ParameterDirection.ReturnValue;
+                    komutNesnesi.Parameters.Add(returnValue);
+                    BaglantiyiAc();
+                    komutNesnesi.ExecuteNonQuery();
+                    sonuc = (int)komutNesnesi.Parameters["@return_value"].Value;
+                }
                 return sonuc;
             }
             catch 

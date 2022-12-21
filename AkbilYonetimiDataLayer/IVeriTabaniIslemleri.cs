@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AkbilYonetimiDataLayer
 {
-    public interface IVeriTabaniIslemleri
+    public interface IVeriTabaniIslemleri : ISayisalDonusluProsedur
     {
         string ConnectionStringCumlesi { get; set; }
 

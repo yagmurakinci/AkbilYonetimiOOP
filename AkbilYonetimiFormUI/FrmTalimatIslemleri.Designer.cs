@@ -36,7 +36,7 @@ namespace AkbilYonetimiFormUI
             this.label1 = new System.Windows.Forms.Label();
             this.lblBekleyenTalimat = new System.Windows.Forms.Label();
             this.cmbBoxAkbiller = new System.Windows.Forms.ComboBox();
-            this.checkBoxBekleyenTalimatlar = new System.Windows.Forms.CheckBox();
+            this.checkBoxTumunuGoster = new System.Windows.Forms.CheckBox();
             this.dataGridViewTalimatlar = new System.Windows.Forms.DataGridView();
             this.timerBekleyenTalimat = new System.Windows.Forms.Timer(this.components);
             this.label2 = new System.Windows.Forms.Label();
@@ -112,18 +112,18 @@ namespace AkbilYonetimiFormUI
             this.cmbBoxAkbiller.Text = "Akbil Seçiniz...";
             this.cmbBoxAkbiller.SelectedIndexChanged += new System.EventHandler(this.cmbBoxAkbiller_SelectedIndexChanged);
             // 
-            // checkBoxBekleyenTalimatlar
+            // checkBoxTumunuGoster
             // 
-            this.checkBoxBekleyenTalimatlar.AutoSize = true;
-            this.checkBoxBekleyenTalimatlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.checkBoxBekleyenTalimatlar.ForeColor = System.Drawing.Color.Red;
-            this.checkBoxBekleyenTalimatlar.Location = new System.Drawing.Point(36, 131);
-            this.checkBoxBekleyenTalimatlar.Name = "checkBoxBekleyenTalimatlar";
-            this.checkBoxBekleyenTalimatlar.Size = new System.Drawing.Size(255, 19);
-            this.checkBoxBekleyenTalimatlar.TabIndex = 4;
-            this.checkBoxBekleyenTalimatlar.Text = "Sadece Bekleyen Talimatları Göster";
-            this.checkBoxBekleyenTalimatlar.UseVisualStyleBackColor = true;
-            this.checkBoxBekleyenTalimatlar.CheckedChanged += new System.EventHandler(this.checkBoxBekleyenTalimatlar_CheckedChanged);
+            this.checkBoxTumunuGoster.AutoSize = true;
+            this.checkBoxTumunuGoster.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.checkBoxTumunuGoster.ForeColor = System.Drawing.Color.Red;
+            this.checkBoxTumunuGoster.Location = new System.Drawing.Point(36, 131);
+            this.checkBoxTumunuGoster.Name = "checkBoxTumunuGoster";
+            this.checkBoxTumunuGoster.Size = new System.Drawing.Size(124, 19);
+            this.checkBoxTumunuGoster.TabIndex = 4;
+            this.checkBoxTumunuGoster.Text = "Tümünü Göster";
+            this.checkBoxTumunuGoster.UseVisualStyleBackColor = true;
+            this.checkBoxTumunuGoster.CheckedChanged += new System.EventHandler(this.checkBoxBekleyenTalimatlar_CheckedChanged);
             // 
             // dataGridViewTalimatlar
             // 
@@ -188,19 +188,19 @@ namespace AkbilYonetimiFormUI
             this.talimatigerceklestirToolStripMenuItem,
             this.talimatiSilToolStripMenuItem});
             this.contextMenuStripTalimatGrid.Name = "contextMenuStrip1";
-            this.contextMenuStripTalimatGrid.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStripTalimatGrid.Size = new System.Drawing.Size(180, 48);
             // 
             // talimatigerceklestirToolStripMenuItem
             // 
             this.talimatigerceklestirToolStripMenuItem.Name = "talimatigerceklestirToolStripMenuItem";
-            this.talimatigerceklestirToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.talimatigerceklestirToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.talimatigerceklestirToolStripMenuItem.Text = "Talimatı Gerçekleştir";
             this.talimatigerceklestirToolStripMenuItem.Click += new System.EventHandler(this.talimatigerceklestirToolStripMenuItem_Click);
             // 
             // talimatiSilToolStripMenuItem
             // 
             this.talimatiSilToolStripMenuItem.Name = "talimatiSilToolStripMenuItem";
-            this.talimatiSilToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.talimatiSilToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.talimatiSilToolStripMenuItem.Text = "Talimatı Sil";
             this.talimatiSilToolStripMenuItem.Click += new System.EventHandler(this.talimatiSilToolStripMenuItem_Click);
             // 
@@ -211,7 +211,7 @@ namespace AkbilYonetimiFormUI
             this.ClientSize = new System.Drawing.Size(612, 324);
             this.Controls.Add(this.groupBoxBakiye);
             this.Controls.Add(this.dataGridViewTalimatlar);
-            this.Controls.Add(this.checkBoxBekleyenTalimatlar);
+            this.Controls.Add(this.checkBoxTumunuGoster);
             this.Controls.Add(this.cmbBoxAkbiller);
             this.Controls.Add(this.lblBekleyenTalimat);
             this.Controls.Add(this.label1);
@@ -239,7 +239,7 @@ namespace AkbilYonetimiFormUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblBekleyenTalimat;
         private System.Windows.Forms.ComboBox cmbBoxAkbiller;
-        private System.Windows.Forms.CheckBox checkBoxBekleyenTalimatlar;
+        private System.Windows.Forms.CheckBox checkBoxTumunuGoster;
         private System.Windows.Forms.DataGridView dataGridViewTalimatlar;
         private System.Windows.Forms.Timer timerBekleyenTalimat;
         private System.Windows.Forms.Label label2;
