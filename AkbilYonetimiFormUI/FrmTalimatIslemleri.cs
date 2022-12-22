@@ -2,6 +2,7 @@
 using AkbilYonetimiDataLayer;
 using AkbilYonetimiEntityLayer.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -55,7 +56,7 @@ namespace AkbilYonetimiFormUI
             timerBekleyenTalimat.Interval = 1000;
             timerBekleyenTalimat.Enabled = true;
             //metodu tekrar inceleyeceğiz
-            GrideTalimatlariGetir();
+            TalimatlariGetir();
             BekleyenTalimatSayisiniGetir(); // hata verdiği için yorum satırı yaptık
             dataGridViewTalimatlar.ContextMenuStrip = contextMenuStripTalimatGrid;
             groupBoxBakiye.Enabled = false;
@@ -108,14 +109,7 @@ namespace AkbilYonetimiFormUI
                     cmbBoxAkbiller.SelectedIndex = -1;
                     cmbBoxAkbiller.Text = "Akbil Seçiniz..";
                     groupBoxBakiye.Enabled = false;
-                    if (checkBoxTumunuGoster.Checked)
-                    {
-                        GrideTalimatlariGetir(true);
-                    }
-                    else
-                    {
-                        GrideTalimatlariGetir();
-                    }
+                    TalimatlariGetir();
                     BekleyenTalimatSayisiniGetir();
                 }
                 else
@@ -131,17 +125,30 @@ namespace AkbilYonetimiFormUI
                 MessageBox.Show("Beklenmedik bir hata oluştu" + hata.Message);
             }
         }
+
+        private void TalimatlariGetir()
+        {
+            if (checkBoxTumunuGoster.Checked)
+            {
+                GrideTalimatlariGetir(true);
+            }
+            else
+            {
+                GrideTalimatlariGetir();
+            }
+        }
+
         private void GrideTalimatlariGetir (bool tumunuGoster = false)
         {
             try
             {
                 if (tumunuGoster) //tumunuGoster true mu?? True ise girecek
                 {
-                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId=                    { GenelIslemler.GirisYapmisKullaniciID} ");
+                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId={ GenelIslemler.GirisYapmisKullaniciID} ");
                 }
                 else
                 {
-                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId=                    { GenelIslemler.GirisYapmisKullaniciID} and YuklendiMi = 0");
+                    dataGridViewTalimatlar.DataSource = veriTabaniIslemleri.VeriGetir("KullanicininTalimatlari", kosullar: $"KullaniciId={ GenelIslemler.GirisYapmisKullaniciID} and YuklendiMi = 0");
                 }
                 
 
@@ -163,14 +170,7 @@ namespace AkbilYonetimiFormUI
 
         private void checkBoxBekleyenTalimatlar_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxTumunuGoster.Checked)
-            {
-                GrideTalimatlariGetir(true);
-            }
-            else
-            {
-                GrideTalimatlariGetir(false);
-            }
+            TalimatlariGetir();
         }
 
         private void BekleyenTalimatSayisiniGetir()
@@ -244,7 +244,21 @@ namespace AkbilYonetimiFormUI
         {
             try
             {
-               
+                //hangi talimat(lar) -->datagrid view multiselect yapabiliyor 
+                //döngü lazım 
+                int sayac = 0;
+                foreach (DataGridViewRow item in dataGridViewTalimatlar.SelectedRows)
+                {
+                    Hashtable kolonlar = new Hashtable();
+                    kolonlar.Add("YuklendiMi",1);
+                    kolonlar.Add("YuklendigiTarih", $"'{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'");
+                    
+
+                    sayac += veriTabaniIslemleri.KomutIsle (veriTabaniIslemleri.VeriGuncellemeCumlesiOlustur("Talimatlar", kolonlar, $"Id={item.Cells["Id"].Value}"));
+                }// 
+                MessageBox.Show($"{sayac/2} adet talimat gerçekleşti!");
+                TalimatlariGetir();
+                BekleyenTalimatSayisiniGetir();
             }
             catch (Exception hata)
             {
@@ -257,7 +271,25 @@ namespace AkbilYonetimiFormUI
         {
             try
             {
-               
+                int sayac = -1;
+                foreach (DataGridViewRow item in dataGridViewTalimatlar.SelectedRows)
+                {
+                    bool yuklendiMi = (bool)item.Cells["YuklendiMi"].Value;
+                    var akbilNo = item.Cells["AkbilID"].Value.ToString();
+                    int talimatNo = (int)item.Cells["Id"].Value;
+                    if (yuklendiMi)
+                    {
+                        MessageBox.Show($"DİKKAT! {akbilNo} seri numaralı akbilin {talimatNo}'lu yüklemesi yapılmıştır. YÜKLENEN TALİMATI SİLEMEZSİNİZ! \n İşlemlerinize devam etmemiz için tamama basınız");
+                        continue;
+                    }
+
+
+                    string kosul = $"Id={item.Cells["Id"].Value}";
+                    sayac += veriTabaniIslemleri.VeriSil("Talimatlar", kosul);
+                }//foreach bitti
+                MessageBox.Show($"{sayac} adet talimat silindi!");
+                TalimatlariGetir();
+                BekleyenTalimatSayisiniGetir();
             }
             catch (Exception hata)
             {
@@ -265,5 +297,7 @@ namespace AkbilYonetimiFormUI
                 MessageBox.Show("Beklenmedik bir hata oluştu! " + hata.Message);
             }
         }
+
+        
     }
 }

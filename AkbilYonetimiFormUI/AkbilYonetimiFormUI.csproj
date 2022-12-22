@@ -58,6 +58,12 @@
     <Compile Include="FrmAkbilIslemleri.Designer.cs">
       <DependentUpon>FrmAkbilIslemleri.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmAyarlar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAyarlar.Designer.cs">
+      <DependentUpon>FrmAyarlar.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmIslemler.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +89,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmAkbilIslemleri.resx">
       <DependentUpon>FrmAkbilIslemleri.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmAyarlar.resx">
+      <DependentUpon>FrmAyarlar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmIslemler.resx">
       <DependentUpon>FrmIslemler.cs</DependentUpon>

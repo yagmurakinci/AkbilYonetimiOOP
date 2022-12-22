@@ -11,7 +11,7 @@ namespace AkbilYonetimiDataLayer
 {
     public class SQLVeriTabaniİslemleri : IVeriTabaniIslemleri
     {
-        public string ConnectionStringCumlesi { get; set; } 
+        public string ConnectionStringCumlesi { get; set; }
         private SqlConnection baglantiNesnesi;
         private SqlCommand komutNesnesi;
         public SQLVeriTabaniİslemleri()
@@ -97,7 +97,9 @@ namespace AkbilYonetimiDataLayer
             }
         }
 
-        public string VeriGuncellemeCumlesiOLustur(string tabloAdi, Hashtable kolonlar, string kosullar = null)
+
+
+        public string VeriGuncellemeCumlesiOlustur(string tabloAdi, Hashtable kolonlar, string kosullar = null)
         {
             string sorgu = string.Empty;
             string setler = string.Empty;
@@ -107,19 +109,12 @@ namespace AkbilYonetimiDataLayer
                 setler += $"{item} ={kolonlar[item].ToString()},";
             }
             setler = setler.TrimEnd(',');
-            sorgu = $"update {tabloAdi}set {setler}";
+            sorgu = $"update {tabloAdi} set {setler}";
             if (kosullar != null && kosullar != string.Empty)
             {
-                sorgu += $"where{kosullar}";
+                sorgu += $" where {kosullar}";
             }
             return sorgu;
-
-        }
-
-
-        public string VeriGuncellemeCumlesiOlustur(string tabloAdi)
-        {
-            throw new NotImplementedException();
         }
 
         public int VeriSil(string tabloAdi, string kosullar = null)
@@ -148,10 +143,7 @@ namespace AkbilYonetimiDataLayer
             }
         }
 
-        public string VeriGuncellemeCumlesiOlustur(string tabloAdi, Hashtable kolonlar, string kosullar = null)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Dictionary<string, object> VeriOku(string tabloAdi, string[] kolonlar, string kosullar = null)
         {
@@ -165,7 +157,7 @@ namespace AkbilYonetimiDataLayer
                 }
                 alanlar = alanlar.TrimEnd(',');
                 string sorgu = $"select {alanlar} from {tabloAdi} ";
-                if (kosullar !=null && kosullar!=string.Empty)
+                if (kosullar != null && kosullar != string.Empty)
                 {
                     sorgu += $" where {kosullar}";
                 }
@@ -190,7 +182,7 @@ namespace AkbilYonetimiDataLayer
                 }//using bitti
                 return sonuc;
             }
-            catch 
+            catch
             {
 
                 throw;
@@ -207,6 +199,7 @@ namespace AkbilYonetimiDataLayer
                     baglantiNesnesi.ConnectionString = ConnectionStringCumlesi;
                     komutNesnesi.CommandText = prosedurAdi;
                     komutNesnesi.CommandType = CommandType.StoredProcedure;
+                    komutNesnesi.Parameters.Clear();
                     if (girdiler != null)
                     {
                         foreach (var item in girdiler)
@@ -224,7 +217,7 @@ namespace AkbilYonetimiDataLayer
                 }
                 return sonuc;
             }
-            catch 
+            catch
             {
 
                 throw;

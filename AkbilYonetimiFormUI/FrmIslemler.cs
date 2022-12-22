@@ -28,7 +28,9 @@ namespace AkbilYonetimiFormUI
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            FrmAyarlar frmAyarlar = new FrmAyarlar();
+            frmAyarlar.Show();
         }
 
         private void btnAkbiller_Click(object sender, EventArgs e)

@@ -85,10 +85,10 @@ namespace AkbilYonetimiFormUI
 
         private void btnKayitOl_Click(object sender, EventArgs e)
         {
-            
+            this.Hide();
             FrmKayitOl frmKayitOl = new FrmKayitOl();
             frmKayitOl.Show();
-            this.Close();
+            
         }
 
         private void FrmGiris_Load(object sender, EventArgs e)
